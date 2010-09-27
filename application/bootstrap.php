@@ -73,10 +73,11 @@ Kohana::$config->attach(new Kohana_Config_File);
  */
 Kohana::modules(
 	array(
-		'auth'       => MODPATH.'auth',       // Basic authentication
-		'database'   => MODPATH.'database',   // Database access
-		'orm'        => MODPATH.'orm',        // Object Relationship Mapping
-		'pagination' => MODPATH.'pagination', // Paging of results
+		'auth'       => MODPATH . 'auth',
+		'database'   => MODPATH . 'database',
+		'orm'        => MODPATH . 'orm',
+        'flash'      => MODPATH . 'flash',
+		'pagination' => MODPATH . 'pagination',
 	)
 );
 
@@ -90,6 +91,11 @@ Route::set( 'admin', 'admin(/<controller>(/<action>(/<id>)))' )
 		)
 	);
 
+# Shortcuts for content pages
+Route::set( 'about', 'about')->defaults( array( 'controller' => 'content', 'action' => 'index', 'id' => 'about' ) );
+Route::set( 'home', 'home')->defaults( array( 'controller' => 'content', 'action' => 'index', 'id' => 'home' ) );
+
+# Long form of content pages
 Route::set( 'content', '(content(/<id>))')
 	->defaults(
 		array(
@@ -99,23 +105,13 @@ Route::set( 'content', '(content(/<id>))')
 		)
 	);
 
-Route::set( 'login', '(login)')
-	->defaults(
-		array(
-			'controller' => 'user',
-			'action'     => 'login',
-		)
-	);
-
-Route::set( 'logout', '(logout)')
-	->defaults(
-		array(
-			'controller' => 'user',
-			'action'     => 'logout',
-		)
-	);
+# Shortcuts for user actions
+Route::set( 'login', 'login' )->defaults( array( 'controller' => 'user', 'action' => 'login' ) );
+Route::set( 'logout', 'logout' )->defaults( array( 'controller' => 'user', 'action' => 'logout' ) );
+Route::set( 'signup', 'signup' )->defaults( array( 'controller' => 'user', 'action' => 'signup' ) );
 
 
+# And the four option default
 Route::set( 'default', '(<controller>(/<action>(/<id>(/<argument>))))' )
 	->defaults(
 		array(
@@ -132,7 +128,8 @@ Route::set( 'default', '(<controller>(/<action>(/<id>(/<argument>))))' )
  * Execute the main request. A source of the URI can be passed, eg: $_SERVER['PATH_INFO'].
  * If no source is specified, the URI will be automatically detected.
  */
-echo Request::instance()
-	->execute()
-	->send_headers()
-	->response;
+$request = Request::instance();
+$request->execute();
+$request->send_headers();
+Flash::update();
+echo $request->response;

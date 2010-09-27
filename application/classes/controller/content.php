@@ -9,13 +9,13 @@
 			$page = preg_replace( '/[^0-9a-z\-_]/', '', strtolower( $page ) );
 		
 			try {
-				$this->template->message = View::factory( 'content/' . $page );
+				$this->template->body = View::factory( 'content/' . $page );
 				// Call the preparation method, if it exists.
 				$method = "prepare_$page";
 				if( method_exists( $this, $method ) ) { $this->$method(); }
 			}
 			catch ( Exception $e ) {
-				$this->template->message = View::factory( 'error/404' );
+				$this->template->body = View::factory( 'error/404' );
 				$this->request->status = 404;
 			}
 			

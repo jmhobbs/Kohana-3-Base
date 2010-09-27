@@ -20,7 +20,9 @@
 				// Anyone logged in can reach this
 				'controller_three' => '*',
 				// Any other controller can only be reached by those with the 'view' role
-				'*' => 'view'
+				'*' => 'view',
+				// Anyone can access this controller
+				'controller_four' => false
 			);
 			
 		*/
@@ -48,7 +50,12 @@
 					Request::instance()->redirect( 'login' );
 				}
 			}
-			
+
+			// Try to pre-fetch the template. Doesn't have to succeed.
+			try { $this->template->body = View::factory( Request::instance()->controller . '/' . Request::instance()->action ); }
+			catch( Kohana_View_Exception $e ){}
+
+
 		} // Controller_Site::before
 		
 		/**
@@ -68,7 +75,7 @@
 			else if ( '*' == $this->auth[$action] ) {
 				$auth_result = Auth::instance()->logged_in();
 			}
-			else {
+			else if ( false !== $this->auth[$action] ) {
 				$auth_result = Auth::instance()->logged_in( $this->auth[$action] );
 			}
 			return $auth_result;

@@ -7,4 +7,11 @@ class Form extends Kohana_Form {
 		return '<div class="form-error">' . $errors[$name] . '</div>';
 	}
 
+	public static function open_slice ( $name ) {
+		$value = '<div class="form-slice" id="form-slice-' . htmlspecialchars( $name ). '">';
+		return $value;
+	}
+
+	public static function close_slice () { return '</div>'; }
+
 }

@@ -11,8 +11,6 @@
 		public function action_login () {
 			if( Auth::instance()->logged_in() != 0 ) { Request::instance()->redirect( 'user/' ); }
 
-			$this->template->message = View::factory( 'user/login' );
-			
 			if( $_POST ) {
 				$user = ORM::factory('user');
 				$status = $user->login( $_POST );
@@ -20,7 +18,7 @@
 					Request::instance()->redirect( 'user/' );
 				}
 				else {
-					$this->template->message->errors = $_POST->errors( 'login' );
+					$this->template->body->errors = $_POST->errors( 'login' );
 				}
 			}
 			
@@ -35,6 +33,13 @@
 		} // Controller_User::action_logout
 
 		/**
+		 * Create a new user.
+		 **/
+		public function action_signup () {
+			if( Auth::instance()->logged_in() != 0 ) { Request::instance()->redirect( 'user/' ); }
+		}
+
+		/**
 		 * Add a new admin user to the system via the command line.
 		 * 
 		 * Example Usage:
@@ -45,7 +50,7 @@
 		 */
 		public function action_add_admin ( $username, $password ) {
 			if( 'cli' != PHP_SAPI ) {
-				$this->template->message = View::factory( 'error/404' );
+				$this->template->body = View::factory( 'error/404' );
 				$this->request->status = 404;
 				return;
 			}
