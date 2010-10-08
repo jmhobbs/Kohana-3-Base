@@ -1,5 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
+require_once( 'app.cfg.php' );
+
 //-- Environment setup --------------------------------------------------------
 
 /**
@@ -8,7 +10,7 @@
  * @see  http://docs.kohanaphp.com/about.configuration
  * @see  http://php.net/timezones
  */
-date_default_timezone_set('America/Chicago');
+date_default_timezone_set( DEFAULT_TIMEZONE );
 
 /**
  * Set the default locale.
@@ -51,7 +53,7 @@ ini_set('unserialize_callback_func', 'spl_autoload_call');
  */
 Kohana::init(
 	array(
-		'base_url' => '/',
+		'base_url' => WEB_ROOT,
 		'index_file' => false,
 		'profile' => ! IN_PRODUCTION,
 		'caching' => IN_PRODUCTION
@@ -76,8 +78,9 @@ Kohana::modules(
 		'auth'       => MODPATH . 'auth',
 		'database'   => MODPATH . 'database',
 		'orm'        => MODPATH . 'orm',
-        'flash'      => MODPATH . 'flash',
+		'flash'      => MODPATH . 'flash',
 		'pagination' => MODPATH . 'pagination',
+		'migrations' => MODPATH . 'migrations'
 	)
 );
 
