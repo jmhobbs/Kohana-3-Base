@@ -1,5 +1,7 @@
 <?php
 
+	require_once( 'config.php' );
+
 /**
  * The directory in which your application specific resources are located.
  * The application directory must contain the config/kohana.php file.
@@ -40,11 +42,16 @@ define('EXT', '.php');
  *
  * In a production environment, it is safe to ignore notices and strict warnings.
  * Disable them by using: E_ALL ^ E_NOTICE
- * 
+ *
  * When using a legacy application with PHP >= 5.3, it is recommended to disable
  * deprecated notices. Disable with: E_ALL & ~E_DEPRECATED
  */
-error_reporting(E_ALL | E_STRICT);
+if( IN_PRODUCTION or NO_DEBUG ) {
+	error_reporting( E_ALL ^ E_NOTICE );
+}
+else {
+	error_reporting( E_ALL | E_STRICT );
+}
 
 /**
  * End of standard configuration! Changing any of the code below should only be

@@ -1,7 +1,5 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-require_once( 'app.cfg.php' );
-
 //-- Environment setup --------------------------------------------------------
 
 /**
@@ -78,9 +76,9 @@ Kohana::modules(
 		'auth'       => MODPATH . 'auth',
 		'database'   => MODPATH . 'database',
 		'orm'        => MODPATH . 'orm',
-		'flash'      => MODPATH . 'flash',
 		'pagination' => MODPATH . 'pagination',
-		'migrations' => MODPATH . 'migrations'
+		'migrations' => MODPATH . 'migrations',
+		'message'    => MODPATH . 'message',
 	)
 );
 
@@ -126,13 +124,21 @@ Route::set( 'default', '(<controller>(/<action>(/<id>(/<argument>))))' )
 	);
 
 
-
-/**
- * Execute the main request. A source of the URI can be passed, eg: $_SERVER['PATH_INFO'].
- * If no source is specified, the URI will be automatically detected.
- */
 $request = Request::instance();
-$request->execute();
-$request->send_headers();
-Flash::update();
-echo $request->response;
+try {
+	$request->execute();
+}
+catch ( Exception $e ) {
+	if ( ! IN_PRODUCTION ) {
+		throw $e;
+	}
+
+	Kohana::$log->add( Kohana::ERROR, Kohana::exception_text( $e ) );
+
+	$request->status = 404;
+	$request->response = View::factory( 'template' )
+		->set( 'title', '404' )
+		->set( 'content', View::factory( 'errors/404' ) );
+}
+
+echo $request->send_headers()->response;
